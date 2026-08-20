@@ -4,6 +4,7 @@
   "name": "Hyprsidekick",
   "version": "1.0.0",
   "author": "Kelvin Confesor",
+  "license": "MIT",
   "description": "Mnemonic named-workspace switcher with pill, dropdown, and config UI",
   "kinds": [
     "bar-widget"
@@ -41,7 +42,7 @@
           "icon": ""
         }
       ],
-      "numberedMode": "range",
+      "numberedMode": "active",
       "numberedCount": 9,
       "hideStockWidget": true,
       "barSection": "left"

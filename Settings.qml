@@ -126,7 +126,7 @@ Panel {
     for (var i = 0; i < ws.length; i++)
       wsModel.append({ key: ws[i].key || "", name: ws[i].name || "", icon: ws[i].icon || "" })
     wLabelFormat = setting("labelFormat", "key-name")
-    wNumberedMode = setting("numberedMode", "range")
+    wNumberedMode = setting("numberedMode", "active")
     wNumberedCount = setting("numberedCount", 9)
     wHideStock = setting("hideStockWidget", true)
     wSection = setting("barSection", "left")

@@ -4,7 +4,7 @@ import qs.Commons
 import qs.Ui
 import "Model.js" as Model
 
-// The workspace dropdown. Left-clicking the pill (Aerospace.qml) opens this.
+// The workspace dropdown. Left-clicking the pill (Widget.qml) opens this.
 // Named mnemonics list first, then active numbered workspaces; a row click
 // jumps to that workspace. Anchored to the pill via KeyboardPanel, the same
 // popout primitive the first-party clock uses.
@@ -14,7 +14,7 @@ Panel {
   ipcTarget: "kconfesor.hyprsidekick"
   manageIpc: false
 
-  // Set by Aerospace.injectPanel().
+  // Set by Widget.injectPanel().
   property var anchorItem: null
   property var hostWidget: null
   readonly property var barIdentity: hostWidget || root
@@ -22,7 +22,7 @@ Panel {
   readonly property string labelFormat: setting("labelFormat", "key-name")
   readonly property var workspacesConfig: setting("workspaces", [])
   // "range" (always 1..numberedCount) | "active" (only occupied/focused) | "hidden"
-  readonly property string numberedMode: setting("numberedMode", "range")
+  readonly property string numberedMode: setting("numberedMode", "active")
   readonly property int numberedCount: setting("numberedCount", 9)
 
   readonly property var focusedWs: Hyprland.focusedWorkspace
