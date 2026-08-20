@@ -77,11 +77,11 @@ Panel {
     return Qt.rgba(c.r, c.g, c.b, alpha)
   }
 
-  function openConfig() {
-    // Opens shell.json (where this widget's workspaces are configured) in the
-    // user's editor via the native launcher; $HOME expands in the bash run.
-    if (root.bar) root.bar.run("omarchy-launch-config-editor \"$HOME/.config/omarchy/shell.json\"")
+  function openSettings() {
+    // Hand off to the host widget, which closes this dropdown and opens the
+    // Settings panel (one popout at a time).
     root.close()
+    if (root.hostWidget && root.hostWidget.openSettings) root.hostWidget.openSettings()
   }
 
   readonly property int rowHeight: Style.space(28)
@@ -214,7 +214,7 @@ Panel {
               }
 
               Text {
-                text: "Open config"
+                text: "Settings"
                 color: root.contentForeground
                 opacity: 0.85
                 font.family: root.contentFontFamily
@@ -228,7 +228,7 @@ Panel {
               anchors.fill: parent
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
-              onClicked: root.openConfig()
+              onClicked: root.openSettings()
             }
           }
         }

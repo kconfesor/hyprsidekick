@@ -65,28 +65,43 @@ BarWidget {
   readonly property bool popoutSwitchClosing: panelLoader.item ? panelLoader.item.popoutSwitchClosing === true : false
   function closeForPopoutSwitch() { if (panelLoader.item) panelLoader.item.closeForPopoutSwitch() }
 
-  function injectPanel() {
-    var target = panelLoader.item
+  function injectInto(target) {
     if (!target) return
     if ("bar" in target) target.bar = root.bar
     if ("settings" in target) target.settings = root.settings
     if ("anchorItem" in target) target.anchorItem = button
     if ("hostWidget" in target) target.hostWidget = root
   }
+  function injectPanel() { injectInto(panelLoader.item) }
+  function injectSettings() { injectInto(settingsLoader.item) }
+
+  // The dropdown's footer calls this to open the Settings panel (closing the
+  // dropdown first — one popout at a time).
+  function openSettings() {
+    if (panelLoader.item) panelLoader.item.close()
+    if (settingsLoader.item) settingsLoader.item.open()
+  }
+  function closeSettings() { if (settingsLoader.item) settingsLoader.item.close() }
 
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
-  onBarChanged: injectPanel()
-  onSettingsChanged: injectPanel()
+  onBarChanged: { injectPanel(); injectSettings() }
+  onSettingsChanged: { injectPanel(); injectSettings() }
 
-  // Panel.qml is added in Task 4. Until then this Loader stays inactive so the
-  // widget renders standalone.
   Loader {
     id: panelLoader
     active: true
     source: Qt.resolvedUrl("Panel.qml")
     visible: false
     onLoaded: { root.injectPanel(); Qt.callLater(root.injectPanel) }
+  }
+
+  Loader {
+    id: settingsLoader
+    active: true
+    source: Qt.resolvedUrl("Settings.qml")
+    visible: false
+    onLoaded: { root.injectSettings(); Qt.callLater(root.injectSettings) }
   }
 
   WidgetButton {
