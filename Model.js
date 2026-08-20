@@ -61,6 +61,32 @@ function numberedRows(live, focusedId) {
   return rows
 }
 
+// A fixed range of numbered workspaces 1..count, whether or not they exist
+// yet. Existing ones carry their occupied/focused state; the rest are empty
+// placeholders (clicking one creates it).
+function numberedRange(live, focusedId, count) {
+  var byId = {}
+  for (var i = 0; i < live.length; i++) if (live[i].id > 0) byId[live[i].id] = live[i]
+
+  var n = Number(count)
+  if (!isFinite(n) || n < 0) n = 0
+
+  var rows = []
+  for (var id = 1; id <= n; id++) {
+    var w = byId[id] || null
+    rows.push({
+      kind: "numbered",
+      key: String(id),
+      name: String(id),
+      icon: "",
+      exists: w !== null,
+      occupied: w !== null && w.occupied === true,
+      focused: id === focusedId
+    })
+  }
+  return rows
+}
+
 // Resolve a display label for a row given the configured format.
 //   "key" | "name" | "key-name" | "icon" | any string containing
 //   {key}/{name}/{icon} (templated verbatim).
@@ -75,7 +101,8 @@ function pillLabel(row, format) {
   switch (f) {
     case "key": return row.key || row.name || ""
     case "icon": return row.icon || row.name || ""
-    case "key-name": return row.key ? (row.key + "·" + row.name) : (row.name || "")
+    // Collapse "C·C" (key == name, e.g. a single-letter named workspace) to "C".
+    case "key-name": return (row.key && row.key !== row.name) ? (row.key + "·" + row.name) : (row.name || "")
     case "name":
     default: return row.name || ""
   }

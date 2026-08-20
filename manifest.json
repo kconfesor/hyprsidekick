@@ -5,8 +5,12 @@
   "version": "1.0.0",
   "author": "Kelvin Confesor",
   "description": "Mnemonic named-workspace switcher with active pill and dropdown, AeroSpace-style",
-  "kinds": ["bar-widget"],
-  "entryPoints": { "barWidget": "Aerospace.qml" },
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Aerospace.qml"
+  },
   "barWidget": {
     "displayName": "Aerospace Workspaces",
     "description": "Mnemonic named-workspace switcher with active pill and dropdown",
@@ -15,16 +19,37 @@
     "defaultSection": "left",
     "defaults": {
       "labelFormat": "key-name",
-      "showNumbered": true,
       "workspaces": [
-        { "key": "W", "name": "web", "icon": "" },
-        { "key": "G", "name": "G", "icon": "" },
-        { "key": "E", "name": "E", "icon": "" },
-        { "key": "C", "name": "C", "icon": "" }
-      ]
+        {
+          "key": "W",
+          "name": "web",
+          "icon": ""
+        },
+        {
+          "key": "G",
+          "name": "G",
+          "icon": ""
+        },
+        {
+          "key": "E",
+          "name": "E",
+          "icon": ""
+        },
+        {
+          "key": "C",
+          "name": "C",
+          "icon": ""
+        }
+      ],
+      "numberedMode": "range",
+      "numberedCount": 9
     },
     "schema": [
-      { "key": "labelFormat", "type": "string", "label": "Pill label format" }
+      {
+        "key": "labelFormat",
+        "type": "string",
+        "label": "Pill label format"
+      }
     ]
   }
 }

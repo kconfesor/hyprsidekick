@@ -5,7 +5,7 @@ const assert = require("assert")
 // Load Model.js (plain ECMAScript, no QML deps) into this process.
 const src = fs.readFileSync(path.join(__dirname, "..", "Model.js"), "utf8")
 const factory = new Function(
-  src + "\nreturn { namedRows, numberedRows, pillLabel, jumpTarget };"
+  src + "\nreturn { namedRows, numberedRows, numberedRange, pillLabel, jumpTarget };"
 )
 const Model = factory()
 
@@ -47,6 +47,18 @@ check("numberedRows returns sorted active numerics incl focused", () => {
   assert.strictEqual(rows.every(r => r.kind === "numbered"), true)
 })
 
+check("numberedRange lists 1..count with existence + focus", () => {
+  const live = [{ id: 2, name: "2", occupied: true }]
+  const rows = Model.numberedRange(live, 2, 3)
+  assert.deepStrictEqual(rows.map(r => r.key), ["1", "2", "3"])
+  assert.strictEqual(rows[0].exists, false)      // ws 1 not created
+  assert.strictEqual(rows[0].occupied, false)
+  assert.strictEqual(rows[1].exists, true)       // ws 2 exists
+  assert.strictEqual(rows[1].occupied, true)
+  assert.strictEqual(rows[1].focused, true)
+  assert.strictEqual(rows.every(r => r.kind === "numbered"), true)
+})
+
 check("pillLabel honors each format", () => {
   const row = { kind: "named", key: "W", name: "web", icon: "◆" }
   assert.strictEqual(Model.pillLabel(row, "key"), "W")
@@ -54,6 +66,11 @@ check("pillLabel honors each format", () => {
   assert.strictEqual(Model.pillLabel(row, "key-name"), "W·web")
   assert.strictEqual(Model.pillLabel(row, "icon"), "◆")
   assert.strictEqual(Model.pillLabel(row, "[{key}] {name}"), "[W] web")
+})
+
+check("pillLabel key-name collapses when key equals name", () => {
+  const row = { kind: "named", key: "C", name: "C", icon: "" }
+  assert.strictEqual(Model.pillLabel(row, "key-name"), "C")
 })
 
 check("pillLabel icon falls back to name when icon empty", () => {
