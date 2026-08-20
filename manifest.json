@@ -43,7 +43,8 @@
       ],
       "numberedMode": "range",
       "numberedCount": 9,
-      "hideStockWidget": true
+      "hideStockWidget": true,
+      "barSection": "left"
     },
     "schema": [
       {

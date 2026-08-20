@@ -148,6 +148,16 @@ Panel {
                 }
 
                 Text {
+                  visible: rowItem.modelData.icon !== ""
+                  text: rowItem.modelData.icon
+                  color: rowItem.modelData.focused ? root.accent : root.contentForeground
+                  opacity: rowItem.modelData.occupied || rowItem.modelData.focused ? 1 : 0.5
+                  font.family: root.contentFontFamily
+                  font.pixelSize: Style.font.body
+                  verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
                   text: rowItem.modelData.name
                   color: rowItem.modelData.focused ? root.accent : root.contentForeground
                   opacity: rowItem.modelData.occupied || rowItem.modelData.focused ? 1 : 0.5
