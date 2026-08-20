@@ -10,7 +10,7 @@ import "Model.js" as Model
 // no longer hides them.
 BarWidget {
   id: root
-  moduleName: "kconfesor.aerospace"
+  moduleName: "kconfesor.hyprsidekick"
 
   readonly property string labelFormat: setting("labelFormat", "key-name")
   readonly property var workspacesConfig: setting("workspaces", [])

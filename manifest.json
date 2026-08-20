@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "id": "kconfesor.aerospace",
-  "name": "Aerospace Workspaces",
+  "id": "kconfesor.hyprsidekick",
+  "name": "Hyprsidekick",
   "version": "1.0.0",
   "author": "Kelvin Confesor",
-  "description": "Mnemonic named-workspace switcher with active pill and dropdown, AeroSpace-style",
+  "description": "Mnemonic named-workspace switcher with pill, dropdown, and config UI",
   "kinds": [
     "bar-widget"
   ],
   "entryPoints": {
-    "barWidget": "Aerospace.qml"
+    "barWidget": "Widget.qml"
   },
   "barWidget": {
-    "displayName": "Aerospace Workspaces",
-    "description": "Mnemonic named-workspace switcher with active pill and dropdown",
+    "displayName": "Hyprsidekick",
+    "description": "Mnemonic named-workspace switcher with pill and dropdown",
     "category": "Compositor",
     "allowMultiple": false,
     "defaultSection": "left",

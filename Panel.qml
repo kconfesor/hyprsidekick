@@ -10,8 +10,8 @@ import "Model.js" as Model
 // popout primitive the first-party clock uses.
 Panel {
   id: root
-  moduleName: "kconfesor.aerospace"
-  ipcTarget: "kconfesor.aerospace"
+  moduleName: "kconfesor.hyprsidekick"
+  ipcTarget: "kconfesor.hyprsidekick"
   manageIpc: false
 
   // Set by Aerospace.injectPanel().
