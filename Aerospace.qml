@@ -83,7 +83,7 @@ BarWidget {
   // widget renders standalone.
   Loader {
     id: panelLoader
-    active: false
+    active: true
     source: Qt.resolvedUrl("Panel.qml")
     visible: false
     onLoaded: { root.injectPanel(); Qt.callLater(root.injectPanel) }
