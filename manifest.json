@@ -42,7 +42,8 @@
         }
       ],
       "numberedMode": "range",
-      "numberedCount": 9
+      "numberedCount": 9,
+      "hideStockWidget": true
     },
     "schema": [
       {

@@ -24,6 +24,7 @@ Panel {
   property string wLabelFormat: "key-name"
   property string wNumberedMode: "range"
   property int wNumberedCount: 9
+  property bool wHideStock: true
 
   ListModel { id: wsModel }
 
@@ -47,6 +48,7 @@ Panel {
     wLabelFormat = setting("labelFormat", "key-name")
     wNumberedMode = setting("numberedMode", "range")
     wNumberedCount = setting("numberedCount", 9)
+    wHideStock = setting("hideStockWidget", true)
   }
 
   function persist() {
@@ -60,6 +62,7 @@ Panel {
       labelFormat: root.wLabelFormat,
       numberedMode: root.wNumberedMode,
       numberedCount: root.wNumberedCount,
+      hideStockWidget: root.wHideStock,
       workspaces: ws
     }
     // Apply locally first, then write through the shell so shell.json and the
@@ -84,6 +87,35 @@ Panel {
     var content = Model.hyprBindsLua(ws, root.bindMod)
     if (root.bar)
       root.bar.run("printf %s " + Qt.btoa(content) + " | base64 -d > \"$HOME/.config/hypr/hyprsidekick.lua\" && hyprctl reload")
+  }
+
+  // Show/hide the stock omarchy.workspaces widget. Disabling removes it from
+  // the bar layout; re-enabling restores it to the left, before this widget.
+  function applyStockVisibility() {
+    if (!root.bar) return
+    if (root.wHideStock)
+      root.bar.run("omarchy plugin disable omarchy.workspaces")
+    else
+      root.bar.run("omarchy plugin enable omarchy.workspaces && omarchy bar move omarchy.workspaces --section left --index 1")
+  }
+
+  function setHideStock(v) {
+    root.wHideStock = v
+    persist()
+    applyStockVisibility()
+  }
+
+  // Off-switch: restore the stock widget and disable Hyprsidekick. Reversible
+  // with `omarchy plugin enable kconfesor.hyprsidekick`.
+  function disableSelf() {
+    if (!root.bar) return
+    root.close()
+    root.bar.run(
+      "omarchy-notification-send -u normal 'Hyprsidekick disabled' " +
+      "'Re-enable from the Omarchy menu → Setup → Plugins → Enable Plugin'; " +
+      "omarchy plugin enable omarchy.workspaces && " +
+      "omarchy bar move omarchy.workspaces --section left --index 1 && " +
+      "omarchy plugin disable kconfesor.hyprsidekick")
   }
 
   function addWorkspace() { wsModel.append({ key: "", name: "new", icon: "" }); persist() }
@@ -207,6 +239,42 @@ Panel {
             to: 20
             foreground: root.fg
             onModified: function(v) { root.wNumberedCount = v; root.persist() }
+          }
+
+          PanelSeparator { foreground: root.fg }
+
+          PanelSectionHeader { text: "BAR"; foreground: root.fg; fontFamily: root.fontFamily }
+
+          Item {
+            width: form.width
+            height: stockToggle.height
+            Text {
+              anchors.left: parent.left
+              anchors.right: stockToggle.left
+              anchors.rightMargin: Style.space(8)
+              anchors.verticalCenter: parent.verticalCenter
+              text: "Hide default workspaces widget"
+              color: root.fg
+              font.family: root.fontFamily
+              font.pixelSize: Style.font.body
+              elide: Text.ElideRight
+              verticalAlignment: Text.AlignVCenter
+            }
+            ToggleSwitch {
+              id: stockToggle
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+              checked: root.wHideStock
+              onToggled: root.setHideStock(!root.wHideStock)
+            }
+          }
+
+          Button {
+            text: "Disable Hyprsidekick (restore default)"
+            bordered: true
+            leftAlign: true
+            foreground: root.fg
+            onClicked: root.disableSelf()
           }
 
           PanelSeparator { foreground: root.fg }
