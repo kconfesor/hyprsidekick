@@ -1,6 +1,7 @@
 import QtQuick
 import qs.Commons
 import qs.Ui
+import "Model.js" as Model
 
 // Hyprsidekick settings panel: edit workspaces (key / name / icon) and display
 // options (label format, numbered mode/count). Persists back to the widget's
@@ -67,6 +68,22 @@ Panel {
     if (root.hostWidget && "settings" in root.hostWidget) root.hostWidget.settings = entry
     if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
       root.bar.shell.updateEntryInline(root.moduleName, entry)
+  }
+
+  // Modifier for generated Hyprland binds (matches the user's existing setup).
+  readonly property string bindMod: setting("bindMod", "ALT")
+
+  // Regenerate ~/.config/hypr/hyprsidekick.lua from the current workspace list
+  // and reload Hyprland. Content is base64'd to survive the bash handoff intact.
+  function applyToHyprland() {
+    var ws = []
+    for (var i = 0; i < wsModel.count; i++) {
+      var it = wsModel.get(i)
+      ws.push({ key: it.key, name: it.name })
+    }
+    var content = Model.hyprBindsLua(ws, root.bindMod)
+    if (root.bar)
+      root.bar.run("printf %s " + Qt.btoa(content) + " | base64 -d > \"$HOME/.config/hypr/hyprsidekick.lua\" && hyprctl reload")
   }
 
   function addWorkspace() { wsModel.append({ key: "", name: "new", icon: "" }); persist() }
@@ -190,6 +207,19 @@ Panel {
             to: 20
             foreground: root.fg
             onModified: function(v) { root.wNumberedCount = v; root.persist() }
+          }
+
+          PanelSeparator { foreground: root.fg }
+
+          PanelSectionHeader { text: "HYPRLAND"; foreground: root.fg; fontFamily: root.fontFamily }
+
+          Button {
+            text: "Apply to Hyprland (reload binds)"
+            iconText: "󰑓" // reload
+            bordered: true
+            leftAlign: true
+            foreground: root.fg
+            onClicked: root.applyToHyprland()
           }
 
           PanelSeparator { foreground: root.fg }
