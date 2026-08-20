@@ -1,19 +1,29 @@
 import QtQuick
+import Quickshell
+import Quickshell.Io
 import Quickshell.Hyprland
 import qs.Commons
 import qs.Ui
 import "Model.js" as Model
 
-// AeroSpace-style workspace pill: shows the active named/numbered workspace,
-// left-click opens the dropdown (Panel.qml, wired in Task 4). Named
-// workspaces are matched by name, so the stock widget's numeric-only filter
-// no longer hides them.
+// Mnemonic workspace pill: shows the active named/numbered workspace, left-click
+// opens the dropdown (Panel.qml). Named workspaces are matched by name, so the
+// stock widget's numeric-only filter no longer hides them. Also hosts the
+// Settings panel and the durable config file (see below).
 BarWidget {
   id: root
   moduleName: "kconfesor.hyprsidekick"
 
   readonly property string labelFormat: setting("labelFormat", "key-name")
   readonly property var workspacesConfig: setting("workspaces", [])
+
+  // Durable config, survives `omarchy plugin disable/enable` (which deletes the
+  // shell.json entry). The file is the source of truth; shell.json is the live
+  // injection surface the pill/dropdown read. On load we restore shell.json from
+  // the file if they diverged (i.e. we were reset to manifest defaults).
+  readonly property string configPath: Quickshell.env("HOME") + "/.config/hyprsidekick/config.json"
+  property var fileConfig: undefined
+  property bool fileLoaded: false
 
   readonly property var focusedWs: Hyprland.focusedWorkspace
   readonly property string focusedName: focusedWs ? focusedWs.name : ""
@@ -83,9 +93,75 @@ BarWidget {
   }
   function closeSettings() { if (settingsLoader.item) settingsLoader.item.close() }
 
+  // ---- durable config (survives disable/enable) ---------------------------
+
+  // Full entry from the current shell.json settings.
+  function settingsEntry() {
+    return {
+      id: root.moduleName,
+      labelFormat: setting("labelFormat", "key-name"),
+      numberedMode: setting("numberedMode", "active"),
+      numberedCount: setting("numberedCount", 9),
+      hideStockWidget: setting("hideStockWidget", true),
+      barSection: setting("barSection", "left"),
+      workspaces: setting("workspaces", [])
+    }
+  }
+  // Normalized entry from the durable file.
+  function fileEntry() {
+    var fc = root.fileConfig || {}
+    return {
+      id: root.moduleName,
+      labelFormat: fc.labelFormat !== undefined ? fc.labelFormat : "key-name",
+      numberedMode: fc.numberedMode !== undefined ? fc.numberedMode : "active",
+      numberedCount: fc.numberedCount !== undefined ? fc.numberedCount : 9,
+      hideStockWidget: fc.hideStockWidget !== undefined ? fc.hideStockWidget : true,
+      barSection: fc.barSection !== undefined ? fc.barSection : "left",
+      workspaces: fc.workspaces || []
+    }
+  }
+  // Write the durable file (UTF-8 safe via FileView.setText). Called by
+  // Settings on commit; the dir is ensured in reconcile().
+  function writeConfig(entry) {
+    cfgFile.setText(JSON.stringify(entry, null, 2) + "\n")
+  }
+  // If the file has config that shell.json lost (post reset), restore it and
+  // re-apply the side effects the reset dropped (stock hidden, section).
+  function syncFromFile() {
+    if (!root.bar || !root.fileConfig) return
+    var fe = root.fileEntry()
+    if (!fe.workspaces || fe.workspaces.length === 0) return
+    if (JSON.stringify(root.settingsEntry()) === JSON.stringify(fe)) return
+    if (root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
+      root.bar.shell.updateEntryInline(root.moduleName, fe)
+    if (fe.hideStockWidget) root.bar.run("omarchy plugin disable omarchy.workspaces")
+    root.bar.run("omarchy bar move kconfesor.hyprsidekick --section " + fe.barSection)
+  }
+  // Runs when the file has settled AND the bar is available.
+  function reconcile() {
+    if (!root.bar || !root.fileLoaded) return
+    root.bar.run("mkdir -p \"$HOME/.config/hyprsidekick\"")
+    if (root.fileConfig) root.syncFromFile()
+    else Qt.callLater(function() { root.writeConfig(root.settingsEntry()) }) // first run: seed
+  }
+
+  FileView {
+    id: cfgFile
+    path: root.configPath
+    watchChanges: true
+    printErrors: false
+    onLoaded: {
+      try { root.fileConfig = JSON.parse(text()) } catch (e) { root.fileConfig = null }
+      root.fileLoaded = true
+      root.reconcile()
+    }
+    onLoadFailed: { root.fileConfig = null; root.fileLoaded = true; root.reconcile() }
+    onFileChanged: reload()
+  }
+
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
-  onBarChanged: { injectPanel(); injectSettings() }
+  onBarChanged: { injectPanel(); injectSettings(); reconcile() }
   onSettingsChanged: { injectPanel(); injectSettings() }
 
   Loader {

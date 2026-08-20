@@ -95,11 +95,14 @@ Panel {
     root.settings = e
     if (root.hostWidget && "settings" in root.hostWidget) root.hostWidget.settings = e
   }
-  // Persist to shell.json.
+  // Persist to shell.json (live) AND the durable config file (survives
+  // disable/enable) via the host widget.
   function commitEntry(e) {
     previewEntry(e)
     if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
       root.bar.shell.updateEntryInline(root.moduleName, e)
+    if (root.hostWidget && typeof root.hostWidget.writeConfig === "function")
+      root.hostWidget.writeConfig(e)
   }
 
   function recomputeDups() {
