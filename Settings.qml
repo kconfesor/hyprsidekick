@@ -29,6 +29,7 @@ Panel {
   property int wNumberedCount: 9
   property bool wHideStock: true
   property string wSection: "left"
+  property bool wAccentActive: false
   readonly property string bindMod: setting("bindMod", "ALT")
 
   // Committed state captured on open, for Cancel.
@@ -108,6 +109,7 @@ Panel {
       numberedCount: root.wNumberedCount,
       hideStockWidget: root.wHideStock,
       barSection: root.wSection,
+      accentActive: root.wAccentActive,
       workspaces: ws
     }
   }
@@ -155,6 +157,7 @@ Panel {
     wNumberedCount = setting("numberedCount", 9)
     wHideStock = setting("hideStockWidget", true)
     wSection = setting("barSection", "left")
+    wAccentActive = setting("accentActive", false)
     recomputeDups()
   }
 
@@ -449,6 +452,30 @@ Panel {
               anchors.verticalCenter: parent.verticalCenter
               checked: root.wHideStock
               onToggled: root.setHideStock(!root.wHideStock)
+            }
+          }
+
+          Item {
+            width: form.width
+            height: accentToggle.height
+            Text {
+              anchors.left: parent.left
+              anchors.right: accentToggle.left
+              anchors.rightMargin: Style.space(8)
+              anchors.verticalCenter: parent.verticalCenter
+              text: "Accent color on the bar"
+              color: root.fg
+              font.family: root.fontFamily
+              font.pixelSize: Style.font.body
+              elide: Text.ElideRight
+              verticalAlignment: Text.AlignVCenter
+            }
+            ToggleSwitch {
+              id: accentToggle
+              anchors.right: parent.right
+              anchors.verticalCenter: parent.verticalCenter
+              checked: root.wAccentActive
+              onToggled: { root.wAccentActive = !root.wAccentActive; root.touch() }
             }
           }
 

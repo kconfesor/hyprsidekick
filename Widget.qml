@@ -16,6 +16,8 @@ BarWidget {
 
   readonly property string labelFormat: setting("labelFormat", "key-name")
   readonly property var workspacesConfig: setting("workspaces", [])
+  // Pill color: false = neutral bar foreground (default), true = theme accent.
+  readonly property bool accentActive: setting("accentActive", false)
 
   // Durable config, survives `omarchy plugin disable/enable` (which deletes the
   // shell.json entry). The file is the source of truth; shell.json is the live
@@ -127,6 +129,7 @@ BarWidget {
       numberedCount: setting("numberedCount", 9),
       hideStockWidget: setting("hideStockWidget", true),
       barSection: setting("barSection", "left"),
+      accentActive: setting("accentActive", false),
       workspaces: root.normWs(setting("workspaces", []))
     }
   }
@@ -140,6 +143,7 @@ BarWidget {
       numberedCount: fc.numberedCount !== undefined ? fc.numberedCount : 9,
       hideStockWidget: fc.hideStockWidget !== undefined ? fc.hideStockWidget : true,
       barSection: fc.barSection !== undefined ? fc.barSection : "left",
+      accentActive: fc.accentActive !== undefined ? fc.accentActive : false,
       workspaces: root.normWs(fc.workspaces || [])
     }
   }
@@ -208,7 +212,8 @@ BarWidget {
     anchors.fill: parent
     bar: root.bar
     text: root.pillText
-    active: true
+    active: root.accentActive
+    activeColor: Color.accent
     tooltipText: "Workspaces"
     horizontalMargin: 8.75
     verticalPadding: 8.75
