@@ -5,7 +5,7 @@ const assert = require("assert")
 // Load Model.js (plain ECMAScript, no QML deps) into this process.
 const src = fs.readFileSync(path.join(__dirname, "..", "Model.js"), "utf8")
 const factory = new Function(
-  src + "\nreturn { namedRows, numberedRows, numberedRange, pillLabel, jumpTarget, hyprBindsLua };"
+  src + "\nreturn { namedRows, numberedRows, numberedRange, pillLabel, jumpTarget, hyprBindsLua, safeMod, safeSection, validKey };"
 )
 const Model = factory()
 
@@ -97,6 +97,39 @@ check("hyprBindsLua binds keyed+named workspaces, skips incomplete", () => {
 check("hyprBindsLua defaults mod to ALT and escapes quotes", () => {
   assert.ok(Model.hyprBindsLua([{ key: "W", name: "web" }]).includes("ALT + W"))
   assert.ok(Model.hyprBindsLua([{ key: "Q", name: 'a"b' }], "SUPER").includes('name:a\\"b'))
+})
+
+check("validKey accepts alphanumerics, rejects everything else", () => {
+  assert.ok(Model.validKey("W") && Model.validKey("1") && Model.validKey("F5"))
+  assert.ok(!Model.validKey('W" }) os.execute("x")'))
+  assert.ok(!Model.validKey("a b") && !Model.validKey("code:10") && !Model.validKey(""))
+})
+
+check("safeMod whitelists modifier combos, else ALT", () => {
+  assert.strictEqual(Model.safeMod("super + alt"), "SUPER + ALT")
+  assert.strictEqual(Model.safeMod("CTRL"), "CTRL")
+  assert.strictEqual(Model.safeMod('SUPER"}) os.execute("x'), "ALT")
+  assert.strictEqual(Model.safeMod(""), "ALT")
+  assert.strictEqual(Model.safeMod(null), "ALT")
+})
+
+check("safeSection allowlists left/center/right, else left", () => {
+  assert.strictEqual(Model.safeSection("right"), "right")
+  assert.strictEqual(Model.safeSection("  Center "), "center")
+  assert.strictEqual(Model.safeSection("left; rm -rf ~"), "left")
+  assert.strictEqual(Model.safeSection(""), "left")
+})
+
+check("hyprBindsLua drops injection in key/name/mod", () => {
+  const lua = Model.hyprBindsLua([
+    { key: 'W" }) os.execute("evil', name: "web" }, // bad key -> skipped
+    { key: "N", name: "line1\nrequire('evil')" },    // control char -> skipped
+    { key: "G", name: "Games" },                      // clean -> kept
+  ], 'SUPER") os.execute("evil')                      // bad mod -> ALT
+  assert.ok(!lua.includes("os.execute"))
+  assert.ok(!lua.includes("require('evil')"))
+  assert.ok(lua.includes('o.bind("ALT + G"'))         // mod fell back to ALT
+  assert.ok(!lua.includes('ALT + W'))                 // bad key dropped
 })
 
 check("jumpTarget prefixes named, bare numbered", () => {

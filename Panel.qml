@@ -62,8 +62,12 @@ Panel {
     // This Hyprland (Omarchy "Quattro", Lua config) rejects the classic
     // `hyprctl dispatch workspace <id>` syntax; dispatch through the Lua
     // helper instead, exactly as the stock omarchy.workspaces widget does.
-    // NB: shellQuote lives on Util (qs.Commons), not on `bar`.
-    if (root.bar) root.bar.run("hyprctl dispatch " + Util.shellQuote("hl.dsp.focus({ workspace = \"" + Model.jumpTarget(row) + "\" })"))
+    // NB: shellQuote lives on Util (qs.Commons), not on `bar`. The workspace
+    // target is Lua-escaped so a crafted name can't break out of the string and
+    // inject Lua into the dispatch, then the whole expression is shell-quoted.
+    if (!root.bar) return
+    var target = Model.luaEsc(Model.jumpTarget(row))
+    root.bar.run("hyprctl dispatch " + Util.shellQuote("hl.dsp.focus({ workspace = \"" + target + "\" })"))
     root.close()
   }
 
@@ -139,6 +143,7 @@ Panel {
                   width: Style.space(16)
                   // Numbered rows have key == name; showing both reads as "1 1".
                   text: rowItem.modelData.key === rowItem.modelData.name ? "" : rowItem.modelData.key
+                  textFormat: Text.PlainText
                   color: rowItem.modelData.focused ? root.accent : root.contentForeground
                   opacity: rowItem.modelData.focused ? 1 : 0.5
                   font.family: root.contentFontFamily
@@ -150,6 +155,7 @@ Panel {
                 Text {
                   visible: rowItem.modelData.icon !== ""
                   text: rowItem.modelData.icon
+                  textFormat: Text.PlainText
                   color: rowItem.modelData.focused ? root.accent : root.contentForeground
                   opacity: rowItem.modelData.occupied || rowItem.modelData.focused ? 1 : 0.5
                   font.family: root.contentFontFamily
@@ -159,6 +165,7 @@ Panel {
 
                 Text {
                   text: rowItem.modelData.name
+                  textFormat: Text.PlainText
                   color: rowItem.modelData.focused ? root.accent : root.contentForeground
                   opacity: rowItem.modelData.occupied || rowItem.modelData.focused ? 1 : 0.5
                   font.family: root.contentFontFamily
@@ -216,6 +223,7 @@ Panel {
               Text {
                 width: Style.space(16)
                 text: "" // gear
+                textFormat: Text.PlainText
                 color: root.contentForeground
                 opacity: 0.6
                 font.family: root.contentFontFamily
@@ -225,6 +233,7 @@ Panel {
 
               Text {
                 text: "Settings"
+                textFormat: Text.PlainText
                 color: root.contentForeground
                 opacity: 0.85
                 font.family: root.contentFontFamily

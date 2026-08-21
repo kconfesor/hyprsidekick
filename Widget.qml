@@ -93,7 +93,7 @@ BarWidget {
     if (!target) return
     if ("bar" in target) target.bar = root.bar
     if ("settings" in target) target.settings = root.settings
-    if ("anchorItem" in target) target.anchorItem = button
+    if ("anchorItem" in target) target.anchorItem = pill
     if ("hostWidget" in target) target.hostWidget = root
   }
   function injectPanel() { injectInto(panelLoader.item) }
@@ -164,7 +164,7 @@ BarWidget {
     if (root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
       root.bar.shell.updateEntryInline(root.moduleName, fe)
     if (fe.hideStockWidget) root.bar.run("omarchy plugin disable omarchy.workspaces")
-    root.bar.run("omarchy bar move kconfesor.hyprsidekick --section " + fe.barSection)
+    root.bar.run("omarchy bar move kconfesor.hyprsidekick --section " + Model.safeSection(fe.barSection))
   }
   // Runs when the file has settled AND the bar is available.
   function reconcile() {
@@ -188,8 +188,8 @@ BarWidget {
     onFileChanged: reload()
   }
 
-  implicitWidth: button.implicitWidth
-  implicitHeight: button.implicitHeight
+  implicitWidth: Math.max(Style.space(12), pillLabel.implicitWidth + Style.spaceReal(8.75) * 2)
+  implicitHeight: bar ? bar.barSize : 26
   onBarChanged: { injectPanel(); injectSettings(); reconcile() }
   onSettingsChanged: { injectPanel(); injectSettings() }
 
@@ -209,16 +209,31 @@ BarWidget {
     onLoaded: { root.injectSettings(); Qt.callLater(root.injectSettings) }
   }
 
-  WidgetButton {
-    id: button
+  // Custom pill (not the shared WidgetButton) so the label renders as
+  // Text.PlainText — a crafted workspace name must never be parsed as rich text
+  // in the shared shell process.
+  Item {
+    id: pill
     anchors.fill: parent
-    bar: root.bar
-    text: root.pillText
-    active: root.accentActive
-    activeColor: Color.accent
-    tooltipText: "Workspaces"
-    horizontalMargin: 8.75
-    verticalPadding: 8.75
-    onPressed: function(b) { root.togglePanel() }
+
+    Text {
+      id: pillLabel
+      anchors.centerIn: parent
+      text: root.pillText
+      textFormat: Text.PlainText
+      color: root.accentActive ? Color.accent : (root.bar ? root.bar.foreground : Color.foreground)
+      font.family: root.bar ? root.bar.fontFamily : Style.font.family
+      font.pixelSize: Style.font.body
+      renderType: Text.NativeRendering
+    }
+
+    MouseArea {
+      anchors.fill: parent
+      hoverEnabled: true
+      cursorShape: Qt.PointingHandCursor
+      onClicked: root.togglePanel()
+      onEntered: if (root.bar && typeof root.bar.showTooltip === "function") root.bar.showTooltip(pill, "Workspaces")
+      onExited: if (root.bar && typeof root.bar.hideTooltip === "function") root.bar.hideTooltip(pill)
+    }
   }
 }
