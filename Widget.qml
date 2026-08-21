@@ -15,7 +15,7 @@ BarWidget {
   moduleName: "kconfesor.hyprsidekick"
 
   readonly property string labelFormat: setting("labelFormat", "key-name")
-  readonly property var workspacesConfig: setting("workspaces", Model.defaultWorkspaces())
+  readonly property var workspacesConfig: Model.withDefaultWorkspaces(setting("workspaces", []))
   // Pill color: false = neutral bar foreground (default), true = theme accent.
   readonly property bool accentActive: setting("accentActive", false)
 
@@ -131,7 +131,7 @@ BarWidget {
       barSection: setting("barSection", "left"),
       accentActive: setting("accentActive", false),
       bindMod: setting("bindMod", "ALT"),
-      workspaces: root.normWs(setting("workspaces", Model.defaultWorkspaces()))
+      workspaces: root.normWs(Model.withDefaultWorkspaces(setting("workspaces", [])))
     }
   }
   // Normalized entry from the durable file.

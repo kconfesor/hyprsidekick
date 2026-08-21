@@ -5,7 +5,7 @@ const assert = require("assert")
 // Load Model.js (plain ECMAScript, no QML deps) into this process.
 const src = fs.readFileSync(path.join(__dirname, "..", "Model.js"), "utf8")
 const factory = new Function(
-  src + "\nreturn { namedRows, numberedRows, numberedRange, pillLabel, jumpTarget, hyprBindsLua, safeMod, safeSection, validKey, defaultWorkspaces };"
+  src + "\nreturn { namedRows, numberedRows, numberedRange, pillLabel, jumpTarget, hyprBindsLua, safeMod, safeSection, validKey, defaultWorkspaces, withDefaultWorkspaces };"
 )
 const Model = factory()
 

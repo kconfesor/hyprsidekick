@@ -16,6 +16,13 @@ function defaultWorkspaces() {
   ]
 }
 
+// Return the configured workspaces, or the starter set when there are none
+// (covers both a missing key and an explicit empty array, so a fresh install is
+// never an empty widget regardless of how the shell seeds the entry).
+function withDefaultWorkspaces(arr) {
+  return (Array.isArray(arr) && arr.length > 0) ? arr : defaultWorkspaces()
+}
+
 // One row per configured workspace, joined to live Hyprland state BY NAME.
 // This name-join is the fix for the stock widget, which drops named
 // workspaces by filtering on numeric id.
