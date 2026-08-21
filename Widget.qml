@@ -174,7 +174,17 @@ BarWidget {
     // seed can land empty if the entry wasn't injected yet); otherwise restore
     // shell.json from it if they diverged.
     var hasWs = root.fileConfig && root.fileConfig.workspaces && root.fileConfig.workspaces.length > 0
-    if (hasWs) root.syncFromFile()
+    if (hasWs) {
+      root.syncFromFile()
+      // Idempotently re-assert the stock-widget hide on every startup. The
+      // disabled state can silently drift back to enabled (a config refresh, an
+      // omarchy update, a crash-recovery reset), and syncFromFile only re-runs
+      // the disable when OUR entry diverges — so a boot where our entry matched
+      // but the stock widget had drifted left it visible. Disabling an already
+      // disabled plugin is a no-op, so this is safe to run unconditionally.
+      if (root.fileConfig.hideStockWidget !== false)
+        root.bar.run("omarchy plugin disable omarchy.workspaces")
+    }
     else Qt.callLater(function() { root.writeConfig(root.settingsEntry()) })
   }
 
