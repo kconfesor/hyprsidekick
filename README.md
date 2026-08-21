@@ -1,12 +1,19 @@
 # Hyprsidekick
 
 An [Omarchy](https://omarchy.org/) bar widget for **mnemonic named workspaces** —
-AeroSpace-style. Shows the workspace you're on as a pill, opens a dropdown of all
-your workspaces (named + numbered) to click-jump, and gives you a visual Settings
-panel to manage them and their Hyprland keybinds — no JSON editing required.
+AeroSpace-style (the macOS tiling window manager) adapted to Hyprland. Shows the
+workspace you're on as a pill, opens a dropdown of all your workspaces (named +
+numbered) to click-jump, and gives you a visual Settings panel to manage them and
+their Hyprland keybinds — no JSON editing required.
 
 > Replaces the stock `omarchy.workspaces` widget, which only shows numeric
 > workspaces and hides named ones.
+
+<p align="center">
+  <img src="hyprsidekick-dropdown.png" alt="Workspace dropdown" height="330">
+  &nbsp;&nbsp;&nbsp;
+  <img src="hyprsidekick-settings.png" alt="Settings panel" height="330">
+</p>
 
 ## Features
 
