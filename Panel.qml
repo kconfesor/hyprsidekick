@@ -20,7 +20,7 @@ Panel {
   readonly property var barIdentity: hostWidget || root
 
   readonly property string labelFormat: setting("labelFormat", "key-name")
-  readonly property var workspacesConfig: setting("workspaces", [])
+  readonly property var workspacesConfig: setting("workspaces", Model.defaultWorkspaces())
   // "range" (always 1..numberedCount) | "active" (only occupied/focused) | "hidden"
   readonly property string numberedMode: setting("numberedMode", "active")
   readonly property int numberedCount: setting("numberedCount", 9)

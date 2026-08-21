@@ -159,7 +159,7 @@ Panel {
 
   function loadFromSettings() {
     wsModel.clear()
-    var ws = setting("workspaces", [])
+    var ws = setting("workspaces", Model.defaultWorkspaces())
     for (var i = 0; i < ws.length; i++)
       wsModel.append({ key: ws[i].key || "", name: ws[i].name || "", icon: ws[i].icon || "" })
     wLabelFormat = setting("labelFormat", "key-name")

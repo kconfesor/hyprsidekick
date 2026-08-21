@@ -3,6 +3,19 @@
 // No QML imports and no `.pragma` here: the same file loads in the shell via
 // `import "Model.js" as Model` and in node tests via a Function() wrapper.
 
+// Starter workspaces for a fresh install. The shell does NOT apply the
+// manifest's barWidget.defaults to a bare entry, so this is the real fallback
+// used everywhere `setting("workspaces", …)` is read — a new user immediately
+// sees named workspaces instead of an empty widget.
+function defaultWorkspaces() {
+  return [
+    { key: "W", name: "web", icon: "" },
+    { key: "G", name: "G", icon: "" },
+    { key: "E", name: "E", icon: "" },
+    { key: "C", name: "C", icon: "" }
+  ]
+}
+
 // One row per configured workspace, joined to live Hyprland state BY NAME.
 // This name-join is the fix for the stock widget, which drops named
 // workspaces by filtering on numeric id.

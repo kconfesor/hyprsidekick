@@ -5,7 +5,7 @@ const assert = require("assert")
 // Load Model.js (plain ECMAScript, no QML deps) into this process.
 const src = fs.readFileSync(path.join(__dirname, "..", "Model.js"), "utf8")
 const factory = new Function(
-  src + "\nreturn { namedRows, numberedRows, numberedRange, pillLabel, jumpTarget, hyprBindsLua, safeMod, safeSection, validKey };"
+  src + "\nreturn { namedRows, numberedRows, numberedRange, pillLabel, jumpTarget, hyprBindsLua, safeMod, safeSection, validKey, defaultWorkspaces };"
 )
 const Model = factory()
 
@@ -135,6 +135,13 @@ check("hyprBindsLua drops injection in key/name/mod", () => {
 check("jumpTarget prefixes named, bare numbered", () => {
   assert.strictEqual(Model.jumpTarget({ kind: "named", name: "web" }), "name:web")
   assert.strictEqual(Model.jumpTarget({ kind: "numbered", name: "5" }), "5")
+})
+
+check("defaultWorkspaces gives a non-empty starter set with keys+names", () => {
+  const d = Model.defaultWorkspaces()
+  assert.ok(Array.isArray(d) && d.length >= 3)
+  assert.ok(d.every(w => w.key && w.name))
+  assert.ok(d.some(w => w.name === "web"))
 })
 
 console.log(`\n${passed} checks passed`)
