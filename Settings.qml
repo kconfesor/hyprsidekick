@@ -246,17 +246,18 @@ Panel {
     var ws = []
     for (var i = 0; i < wsModel.count; i++) { var it = wsModel.get(i); ws.push({ key: it.key, name: it.name }) }
     var luaB64 = Qt.btoa(Model.hyprBindsLua(ws, root.wBindMod))
-    var reqB64 = Qt.btoa("\n-- HYPRSIDEKICK:REQUIRE (added by Hyprsidekick)\nrequire(\"hypr.hyprsidekick\")\n")
-    // Write both files safely: append the require line only to a real (non
-    // symlink) bindings.lua that lacks the marker, and write hyprsidekick.lua
-    // atomically via a temp file + rename (which replaces, never follows, a
-    // symlink at the destination).
+    // Write ONLY the plugin's own generated file, and do it atomically: a fresh
+    // mktemp'd file plus `mv -f` replaces (never follows) a symlink at the
+    // destination, with no check-then-open gap to race. We deliberately do NOT
+    // write the user's bindings.lua; we only read it to check for the require
+    // line and, if missing, notify the user to add it themselves.
     root.bar.run(
-      "d=\"$HOME/.config/hypr\"; mkdir -p \"$d\"; b=\"$d/bindings.lua\"; f=\"$d/hyprsidekick.lua\"; " +
-      "if [ -f \"$b\" ] && [ ! -L \"$b\" ] && ! grep -q HYPRSIDEKICK:REQUIRE \"$b\"; then " +
-      "printf %s " + reqB64 + " | base64 -d >> \"$b\"; fi; " +
+      "d=\"$HOME/.config/hypr\"; mkdir -p \"$d\"; f=\"$d/hyprsidekick.lua\"; b=\"$d/bindings.lua\"; " +
       "t=$(mktemp \"$d/.hyprsidekick.lua.XXXXXX\") && printf %s " + luaB64 + " | base64 -d > \"$t\" && " +
-      "mv -f \"$t\" \"$f\" && hyprctl reload")
+      "mv -f \"$t\" \"$f\" && hyprctl reload; " +
+      "grep -qF hypr.hyprsidekick \"$b\" 2>/dev/null || " +
+      "omarchy-notification-send -u normal 'Hyprsidekick' " +
+      "'Add  require(\"hypr.hyprsidekick\")  to ~/.config/hypr/bindings.lua to enable the keybinds.'")
   }
 
   function applyToHyprland() {

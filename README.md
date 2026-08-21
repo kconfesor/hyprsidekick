@@ -71,12 +71,20 @@ omarchy plugin add https://github.com/kconfesor/hyprsidekick.git --enable
 omarchy bar move kconfesor.hyprsidekick --section left
 ```
 
-Open the widget's **Settings** (dropdown → gear), set up your workspaces, and hit
-**Done**. Whenever you add/remove a workspace or change its key, name, or
-modifier, Hyprsidekick regenerates the binds and reloads Hyprland
-automatically, and installs the `require("hypr.hyprsidekick")` line into
-`~/.config/hypr/bindings.lua` for you the first time. (A manual **Apply to
-Hyprland** button is there too, to force a re-apply.)
+**One-time keybind setup.** So Hyprland loads the generated shortcuts, add this
+line to `~/.config/hypr/bindings.lua` once:
+
+```lua
+require("hypr.hyprsidekick")
+```
+
+(Hyprsidekick never edits your `bindings.lua` itself; if the line is missing it
+just sends a reminder. It only writes its own `~/.config/hypr/hyprsidekick.lua`.)
+
+Then open the widget's **Settings** (dropdown → gear), set up your workspaces, and
+hit **Done**. Whenever you add/remove a workspace or change its key, name, or
+modifier, Hyprsidekick regenerates the binds and reloads Hyprland automatically.
+(A manual **Apply to Hyprland** button is there too, to force a re-apply.)
 
 > Plugins run **unsandboxed**. Review the source before enabling.
 

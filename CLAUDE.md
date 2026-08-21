@@ -34,7 +34,9 @@ Verify a change loaded cleanly: `journalctl --user --since "20 seconds ago" -o c
 → mirrored to the widget's entry in `~/.config/omarchy/shell.json` (the live injection surface the pill/dropdown read via `setting(...)`)
 → **Apply to Hyprland** generates `~/.config/hypr/hyprsidekick.lua` (`o.bind` loop) + `hyprctl reload`.
 
-`bindings.lua` has `require("hypr.hyprsidekick")` (marker `HYPRSIDEKICK:REQUIRE`); the manual named-workspace loop was retired. On load, `Widget.qml` self-heals `shell.json` from `config.json` if a plugin disable/enable reset the entry to defaults.
+The user adds `require("hypr.hyprsidekick")` to `bindings.lua` **once** (a one-time setup step). The plugin does NOT write `bindings.lua` — it only reads it (a `grep -qF hypr.hyprsidekick`) and sends a reminder notification if the line is missing. It writes only its own `hyprsidekick.lua`, atomically (`mktemp` + `mv -f`, which replaces rather than follows a symlink). On load, `Widget.qml` self-heals `shell.json` from `config.json` if a plugin disable/enable reset the entry to defaults.
+
+**Security invariants (marketplace-reviewed):** all attacker-influenced values (workspace key/name/icon, pill label) render as `Text.PlainText`; `Model.safeSection` allowlists the bar section before any shell command; `Model.hyprBindsLua` validates keys (alphanumeric), rejects control chars in names, and whitelists the modifier (`Model.safeMod`); click-to-jump Lua-escapes the target (`Model.luaEsc`); never write a user config file, and write our own files only via atomic temp+rename. Keep no raw control bytes in any source file.
 
 ## Omarchy gotchas (cost real debugging — do not relearn)
 
