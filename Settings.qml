@@ -33,6 +33,8 @@ Panel {
 
   // Committed state captured on open, for Cancel.
   property var snapshot: null
+  // Binds signature at open, to decide whether Done must re-apply to Hyprland.
+  property string snapshotBindsSig: ""
   // Keys that appear on more than one workspace (bind conflicts).
   property var dupKeys: []
   readonly property bool hasDups: dupKeys.length > 0
@@ -160,11 +162,33 @@ Panel {
   function removeWorkspace(i) { if (i >= 0 && i < wsModel.count) { wsModel.remove(i); touch() } }
   function setField(i, role, value) { if (i >= 0 && i < wsModel.count) { wsModel.setProperty(i, role, value); touch() } }
 
-  function open() { loadFromSettings(); snapshot = buildEntry(); root.controller.show() }
+  // Order-independent signature of the key→name bindings (only workspaces with
+  // both fields are bound). Used to detect when the Hyprland binds went stale.
+  function sigFromWs(arr) {
+    var parts = []
+    var a = arr || []
+    for (var i = 0; i < a.length; i++) {
+      var w = a[i] || {}
+      var k = String(w.key || "").trim(), n = String(w.name || "").trim()
+      if (k && n) parts.push(k + "\t" + n)
+    }
+    parts.sort()
+    return parts.join("\n")
+  }
+
+  function open() {
+    loadFromSettings()
+    snapshot = buildEntry()
+    snapshotBindsSig = sigFromWs(snapshot.workspaces)
+    root.controller.show()
+  }
 
   function done() {
     if (root.hasDups) return
-    commitEntry(buildEntry())
+    var entry = buildEntry()
+    commitEntry(entry)
+    // Only touch Hyprland when the key→name bindings actually changed.
+    if (sigFromWs(entry.workspaces) !== snapshotBindsSig) writeBinds()
     root.close()
   }
 
@@ -197,14 +221,24 @@ Panel {
     if (root.bar) root.bar.run("omarchy bar move kconfesor.hyprsidekick --section " + v)
   }
 
+  // Regenerate ~/.config/hypr/hyprsidekick.lua from the workspace list, make
+  // sure bindings.lua loads it (one-time, idempotent), and reload Hyprland.
+  function writeBinds() {
+    if (!root.bar) return
+    var ws = []
+    for (var i = 0; i < wsModel.count; i++) { var it = wsModel.get(i); ws.push({ key: it.key, name: it.name }) }
+    var luaB64 = Qt.btoa(Model.hyprBindsLua(ws, root.bindMod))
+    var reqB64 = Qt.btoa("\n-- HYPRSIDEKICK:REQUIRE (added by Hyprsidekick)\nrequire(\"hypr.hyprsidekick\")\n")
+    root.bar.run(
+      "grep -q HYPRSIDEKICK:REQUIRE \"$HOME/.config/hypr/bindings.lua\" 2>/dev/null || " +
+      "(printf %s " + reqB64 + " | base64 -d >> \"$HOME/.config/hypr/bindings.lua\"); " +
+      "printf %s " + luaB64 + " | base64 -d > \"$HOME/.config/hypr/hyprsidekick.lua\" && hyprctl reload")
+  }
+
   function applyToHyprland() {
     if (root.hasDups) return
     commitEntry(buildEntry()) // applying binds implies keeping the config
-    var ws = []
-    for (var i = 0; i < wsModel.count; i++) { var it = wsModel.get(i); ws.push({ key: it.key, name: it.name }) }
-    var content = Model.hyprBindsLua(ws, root.bindMod)
-    if (root.bar)
-      root.bar.run("printf %s " + Qt.btoa(content) + " | base64 -d > \"$HOME/.config/hypr/hyprsidekick.lua\" && hyprctl reload")
+    writeBinds()
   }
 
   function disableSelf() {
