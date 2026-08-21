@@ -22,15 +22,19 @@ their Hyprland keybinds. No JSON editing required.
 You give each workspace a one-letter **mnemonic** and a **name** (and, optionally,
 an **icon**). Hyprsidekick then:
 
-- binds **`ALT + <letter>`** to jump to that workspace, and **`ALT + SHIFT + <letter>`**
-  to send the focused window there, and
+- binds a **modifier + letter** shortcut to jump to that workspace, and
+  **modifier + Shift + letter** to send the focused window there. The modifier
+  defaults to **Alt** (Omarchy already uses **Super** for its numbered workspaces
+  and **Super + letter** for apps, so Alt stays out of the way); choose Alt /
+  Super / Ctrl / Super+Alt in **Settings → Modifier**.
 - shows the workspace you're currently on as a **pill** in the bar, by name,
   letter, `letter·name`, or icon (your choice).
 
-**Example:** a workspace with key `C` and name `Coding` →
+**Example:** a workspace with key `C` and name `Coding`, using the default Alt
+modifier →
 
-- **`ALT + C`** jumps to it (on a Mac-style keyboard remapped with keyd, your
-  `Option`/`Cmd` key acts as `ALT`, so it's **`Cmd + C`**),
+- **`Alt + C`** jumps to it (on a Mac-style keyboard remapped with keyd, your
+  `Option`/`Cmd` key acts as `Alt`, so it's **`Cmd + C`**),
 - the bar pill reads `C·Coding` (or `Coding`, or `C`, or its icon 󰅩).
 
 So instead of remembering "workspace 4", you press the letter that means something
@@ -53,8 +57,8 @@ to you. Click the pill to see them all and jump with the mouse.
   (key, name, icon picker), choose label format and numbered-workspace behavior,
   move the widget between bar sections, and hide the stock widget.
 - **Hyprland integration**: generates `~/.config/hypr/hyprsidekick.lua` with the
-  `ALT+<key>` switch / `ALT+SHIFT+<key>` move binds for your workspaces and
-  reloads Hyprland in one click.
+  `<mod>+<key>` switch / `<mod>+Shift+<key>` move binds for your workspaces
+  (modifier configurable, Alt by default) and reloads Hyprland in one click.
 - Live preview while editing; **Cancel** (or Escape / click-away) reverts,
   **Done** commits.
 - **Durable config**: your workspaces persist to `~/.config/hyprsidekick/config.json`,
@@ -68,8 +72,8 @@ omarchy bar move kconfesor.hyprsidekick --section left
 ```
 
 Open the widget's **Settings** (dropdown → gear), set up your workspaces, and hit
-**Done**. Whenever you add/remove a workspace or change its key or name,
-Hyprsidekick regenerates the `ALT+<key>` binds and reloads Hyprland
+**Done**. Whenever you add/remove a workspace or change its key, name, or
+modifier, Hyprsidekick regenerates the binds and reloads Hyprland
 automatically, and installs the `require("hypr.hyprsidekick")` line into
 `~/.config/hypr/bindings.lua` for you the first time. (A manual **Apply to
 Hyprland** button is there too, to force a re-apply.)
@@ -81,9 +85,11 @@ Hyprland** button is there too, to force a re-apply.)
 - **Left-click the pill** → open the dropdown. Click any workspace to jump to it
   (empty numbered workspaces are created on click).
 - **Dropdown footer → Settings** → open the editor.
-- `ALT + <key>` switches to a workspace, `ALT + SHIFT + <key>` moves the focused
-  window there (binds update automatically when you edit workspaces). On a
-  keyboard remapped with keyd, your `Option`/`Cmd` key is `ALT`.
+- `<mod> + <key>` switches to a workspace, `<mod> + Shift + <key>` moves the
+  focused window there, where `<mod>` is your configured modifier (**Alt** by
+  default; set it in Settings → Modifier). Binds update automatically when you
+  edit workspaces. On a keyboard remapped with keyd, your `Option`/`Cmd` key is
+  `Alt`.
 
 ## Configure
 
