@@ -31,10 +31,12 @@ omarchy plugin add https://github.com/kconfesor/hyprsidekick.git --enable
 omarchy bar move kconfesor.hyprsidekick --section left
 ```
 
-Then open the widget's **Settings → Apply to Hyprland (reload binds)** once, so
-your `ALT+<key>` shortcuts are generated. Adding
-`require("hypr.hyprsidekick")` to `~/.config/hypr/bindings.lua` is done for you
-by Apply; if you prefer, add it by hand.
+Open the widget's **Settings** (dropdown → gear), set up your workspaces, and hit
+**Done**. Whenever you add/remove a workspace or change its key or name,
+Hyprsidekick regenerates the `ALT+<key>` binds and reloads Hyprland
+automatically — and installs the `require("hypr.hyprsidekick")` line into
+`~/.config/hypr/bindings.lua` for you the first time. (A manual **Apply to
+Hyprland** button is there too, to force a re-apply.)
 
 > Plugins run **unsandboxed**. Review the source before enabling.
 
@@ -44,8 +46,8 @@ by Apply; if you prefer, add it by hand.
   (empty numbered workspaces are created on click).
 - **Dropdown footer → Settings** → open the editor.
 - `ALT + <key>` switches to a workspace, `ALT + SHIFT + <key>` moves the focused
-  window there (after **Apply to Hyprland**). On a keyboard remapped with keyd,
-  your `Option`/`Cmd` key is `ALT`.
+  window there (binds update automatically when you edit workspaces). On a
+  keyboard remapped with keyd, your `Option`/`Cmd` key is `ALT`.
 
 ## Configure
 
