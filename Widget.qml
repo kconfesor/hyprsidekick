@@ -170,8 +170,12 @@ BarWidget {
   function reconcile() {
     if (!root.bar || !root.fileLoaded) return
     root.bar.run("mkdir -p \"$HOME/.config/hyprsidekick\"")
-    if (root.fileConfig) root.syncFromFile()
-    else Qt.callLater(function() { root.writeConfig(root.settingsEntry()) }) // first run: seed
+    // Seed the durable file when it's missing OR has no workspaces (a fresh
+    // seed can land empty if the entry wasn't injected yet); otherwise restore
+    // shell.json from it if they diverged.
+    var hasWs = root.fileConfig && root.fileConfig.workspaces && root.fileConfig.workspaces.length > 0
+    if (hasWs) root.syncFromFile()
+    else Qt.callLater(function() { root.writeConfig(root.settingsEntry()) })
   }
 
   FileView {
