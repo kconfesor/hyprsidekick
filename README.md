@@ -10,10 +10,39 @@ their Hyprland keybinds — no JSON editing required.
 > workspaces and hides named ones.
 
 <p align="center">
-  <img src="hyprsidekick-dropdown.png" alt="Workspace dropdown" height="330">
-  &nbsp;&nbsp;&nbsp;
-  <img src="hyprsidekick-settings.png" alt="Settings panel" height="330">
+  <img src="hyprsidekick-dropdown.png" alt="Workspace dropdown" height="300">
+  &nbsp;&nbsp;
+  <img src="hyprsidekick-dropdown-2.png" alt="Workspace dropdown" height="300">
+  &nbsp;&nbsp;
+  <img src="hyprsidekick-settings.png" alt="Settings panel" height="300">
 </p>
+
+## How it works
+
+You give each workspace a one-letter **mnemonic** and a **name** (and, optionally,
+an **icon**). Hyprsidekick then:
+
+- binds **`ALT + <letter>`** to jump to that workspace, and **`ALT + SHIFT + <letter>`**
+  to send the focused window there, and
+- shows the workspace you're currently on as a **pill** in the bar — by name,
+  letter, `letter·name`, or icon (your choice).
+
+**Example:** a workspace with key `C` and name `Coding` →
+
+- **`ALT + C`** jumps to it (on a Mac-style keyboard remapped with keyd, your
+  `Option`/`Cmd` key acts as `ALT`, so it's **`Cmd + C`**),
+- the bar pill reads `C·Coding` (or `Coding`, or `C`, or its icon 󰅩).
+
+So instead of remembering "workspace 4", you press the letter that means something
+to you. Click the pill to see them all and jump with the mouse.
+
+### Reading the dropdown
+
+- **Highlighted** row = the workspace you're on now.
+- **Dot** on the right = that workspace has open windows (occupied); no dot /
+  dimmed = empty.
+- **Named** mnemonics are listed first, then your **numbered** workspaces.
+- **Settings** (gear, bottom) opens the visual editor.
 
 ## Features
 
