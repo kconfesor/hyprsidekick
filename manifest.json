@@ -46,7 +46,8 @@
       "numberedCount": 9,
       "hideStockWidget": true,
       "barSection": "left",
-      "accentActive": false
+      "accentActive": false,
+      "bindMod": "ALT"
     },
     "schema": [
       {

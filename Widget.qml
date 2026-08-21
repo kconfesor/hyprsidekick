@@ -130,6 +130,7 @@ BarWidget {
       hideStockWidget: setting("hideStockWidget", true),
       barSection: setting("barSection", "left"),
       accentActive: setting("accentActive", false),
+      bindMod: setting("bindMod", "ALT"),
       workspaces: root.normWs(setting("workspaces", []))
     }
   }
@@ -144,6 +145,7 @@ BarWidget {
       hideStockWidget: fc.hideStockWidget !== undefined ? fc.hideStockWidget : true,
       barSection: fc.barSection !== undefined ? fc.barSection : "left",
       accentActive: fc.accentActive !== undefined ? fc.accentActive : false,
+      bindMod: fc.bindMod !== undefined ? fc.bindMod : "ALT",
       workspaces: root.normWs(fc.workspaces || [])
     }
   }

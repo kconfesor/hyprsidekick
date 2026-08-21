@@ -99,6 +99,8 @@ into the widget's entry in `~/.config/omarchy/shell.json`:
 | `numberedCount` | integer | `9` | N, when `numberedMode` is `range`. |
 | `hideStockWidget` | bool | `true` | Remove the stock `omarchy.workspaces` from the bar. |
 | `barSection` | `left` · `center` · `right` | `left` | Which bar section the widget sits in. |
+| `bindMod` | `ALT` · `SUPER` · `CTRL` · `SUPER + ALT` | `ALT` | Modifier for the generated `<mod>+<key>` binds (Omarchy uses Super for numbers/apps, so Alt is the safe default). |
+| `accentActive` | bool | `false` | Color the pill with the theme accent instead of the neutral bar color. |
 
 **Placement**: use the Settings **Position** selector, or
 `omarchy bar move kconfesor.hyprsidekick --section <left|center|right>`.
