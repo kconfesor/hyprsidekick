@@ -166,12 +166,14 @@ Panel {
     else
       root.bar.run("omarchy plugin enable omarchy.workspaces && omarchy bar move omarchy.workspaces --section left --index 1")
   }
-  function setHideStock(v) { root.wHideStock = v; touch(); applyStockVisibility() }
+  // Immediate structural actions persist right away (they take effect now, so
+  // config.json must reflect them, or the durable self-heal would fight them).
+  function setHideStock(v) { root.wHideStock = v; commitEntry(buildEntry()); applyStockVisibility() }
 
-  // Move the widget between bar sections immediately (preserves its config).
+  // Move the widget between bar sections (preserves its config).
   function setSection(v) {
     root.wSection = v
-    touch()
+    commitEntry(buildEntry())
     if (root.bar) root.bar.run("omarchy bar move kconfesor.hyprsidekick --section " + v)
   }
 

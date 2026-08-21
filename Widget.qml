@@ -107,6 +107,17 @@ BarWidget {
 
   // ---- durable config (survives disable/enable) ---------------------------
 
+  // Canonical workspace order so an incidental key-order difference between
+  // shell.json and config.json is NOT mistaken for a config reset.
+  function normWs(arr) {
+    var out = []
+    var a = arr || []
+    for (var i = 0; i < a.length; i++) {
+      var w = a[i] || {}
+      out.push({ key: w.key || "", name: w.name || "", icon: w.icon || "" })
+    }
+    return out
+  }
   // Full entry from the current shell.json settings.
   function settingsEntry() {
     return {
@@ -116,7 +127,7 @@ BarWidget {
       numberedCount: setting("numberedCount", 9),
       hideStockWidget: setting("hideStockWidget", true),
       barSection: setting("barSection", "left"),
-      workspaces: setting("workspaces", [])
+      workspaces: root.normWs(setting("workspaces", []))
     }
   }
   // Normalized entry from the durable file.
@@ -129,7 +140,7 @@ BarWidget {
       numberedCount: fc.numberedCount !== undefined ? fc.numberedCount : 9,
       hideStockWidget: fc.hideStockWidget !== undefined ? fc.hideStockWidget : true,
       barSection: fc.barSection !== undefined ? fc.barSection : "left",
-      workspaces: fc.workspaces || []
+      workspaces: root.normWs(fc.workspaces || [])
     }
   }
   // Write the durable file (UTF-8 safe via FileView.setText). Called by
