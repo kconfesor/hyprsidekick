@@ -55,21 +55,41 @@ Panel {
     { value: "center", label: "Center" },
     { value: "right", label: "Right" }
   ]
-  // Curated workspace glyphs; value is the glyph (empty = none).
-  readonly property var iconOptions: [
-    { value: "", label: "—" },
-    { value: "󰖟", label: "󰖟" },
-    { value: "", label: "" },
-    { value: "", label: "" },
-    { value: "󰭹", label: "󰭹" },
-    { value: "󰝚", label: "󰝚" },
-    { value: "󰇮", label: "󰇮" },
-    { value: "󰉋", label: "󰉋" },
-    { value: "󰒓", label: "󰒓" },
-    { value: "󰊴", label: "󰊴" },
-    { value: "󰏘", label: "󰏘" },
-    { value: "󰠮", label: "󰠮" }
-  ]
+  // Curated workspace glyphs (Material Design Icons in the Nerd Font
+  // F0001–F1AF0 block, which JetBrainsMono Nerd Font covers fully). Built from
+  // codepoints so the source carries no literal PUA characters to get mangled.
+  readonly property var iconOptions: {
+    var cps = [
+      0,        // none
+      0xf059f,  // web
+      0xf018d,  // terminal
+      0xf0169,  // code
+      0xf0379,  // monitor
+      0xf0b79,  // chat
+      0xf075a,  // music
+      0xf01ee,  // mail
+      0xf024b,  // folder
+      0xf0493,  // settings
+      0xf02b4,  // game
+      0xf03d8,  // design
+      0xf082e,  // notes
+      0xf02dc,  // home
+      0xf04ce,  // star
+      0xf02d1,  // heart
+      0xf02a2,  // git
+      0xf01bc,  // database
+      0xf02e9,  // image
+      0xf0567,  // video
+      0xf00ed,  // calendar
+      0xf0770   // terminal/bash
+    ]
+    var out = []
+    for (var i = 0; i < cps.length; i++) {
+      var g = cps[i] === 0 ? "" : String.fromCodePoint(cps[i])
+      out.push({ value: g, label: cps[i] === 0 ? "—" : g })
+    }
+    return out
+  }
 
   // ---- state helpers ------------------------------------------------------
 
