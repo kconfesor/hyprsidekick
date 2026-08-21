@@ -216,6 +216,13 @@ Panel {
       anchors.fill: parent
       blocked: true
 
+      // blocked:true forwards keys to the text fields, which also swallows the
+      // panel's own Escape handling — restore Escape-to-close explicitly.
+      Shortcut {
+        sequence: "Escape"
+        onActivated: root.close()
+      }
+
       // Scrolling form (everything except the pinned footer).
       Flickable {
         id: flick

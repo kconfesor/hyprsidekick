@@ -67,13 +67,25 @@ BarWidget {
 
   readonly property string pillText: Model.pillLabel(root.activeRow, root.labelFormat)
 
-  // ---- Popout contract (delegates to Panel.qml; item is null until Task 4).
-  readonly property bool opened: panelLoader.item ? panelLoader.item.opened === true : false
+  // ---- Popout contract. The dropdown (Panel.qml) and the settings panel
+  // (Settings.qml) both use this widget as their KeyboardPanel `owner`, so the
+  // outside-click dismiss routes `owner.close()` here — it must close WHICHEVER
+  // panel is open, not just the dropdown, or the other stays stuck with a focus
+  // grab.
+  readonly property bool opened: (panelLoader.item && panelLoader.item.opened === true)
+    || (settingsLoader.item && settingsLoader.item.opened === true)
   function open() { if (panelLoader.item) panelLoader.item.open() }
-  function close() { if (panelLoader.item) panelLoader.item.close() }
+  function close() {
+    if (panelLoader.item) panelLoader.item.close()
+    if (settingsLoader.item) settingsLoader.item.close()
+  }
   function togglePanel() { if (panelLoader.item) panelLoader.item.toggle() }
-  readonly property bool popoutSwitchClosing: panelLoader.item ? panelLoader.item.popoutSwitchClosing === true : false
-  function closeForPopoutSwitch() { if (panelLoader.item) panelLoader.item.closeForPopoutSwitch() }
+  readonly property bool popoutSwitchClosing: (panelLoader.item && panelLoader.item.popoutSwitchClosing === true)
+    || (settingsLoader.item && settingsLoader.item.popoutSwitchClosing === true)
+  function closeForPopoutSwitch() {
+    if (panelLoader.item) panelLoader.item.closeForPopoutSwitch()
+    if (settingsLoader.item) settingsLoader.item.closeForPopoutSwitch()
+  }
 
   function injectInto(target) {
     if (!target) return
