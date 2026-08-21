@@ -19,7 +19,10 @@ panel to manage them and their Hyprland keybinds — no JSON editing required.
 - **Hyprland integration**: generates `~/.config/hypr/hyprsidekick.lua` with the
   `ALT+<key>` switch / `ALT+SHIFT+<key>` move binds for your workspaces and
   reloads Hyprland — one click.
-- Live preview while editing; **Cancel** reverts, **Done** commits.
+- Live preview while editing; **Cancel** (or Escape / click-away) reverts,
+  **Done** commits.
+- **Durable config**: your workspaces persist to `~/.config/hyprsidekick/config.json`,
+  so disabling/re-enabling or updating the plugin never loses them.
 
 ## Install
 
@@ -46,8 +49,9 @@ by Apply; if you prefer, add it by hand.
 
 ## Configure
 
-Everything is editable in the **Settings** panel. It writes to the widget's entry
-in `~/.config/omarchy/shell.json`:
+Everything is editable in the **Settings** panel (its footer's gear). It persists
+to `~/.config/hyprsidekick/config.json` (the durable source of truth) and mirrors
+into the widget's entry in `~/.config/omarchy/shell.json`:
 
 | Key | Values | Default | Meaning |
 |-----|--------|---------|---------|
@@ -69,8 +73,9 @@ omarchy plugin enable omarchy.workspaces   # restore the stock widget
 ```
 
 Then remove the `require("hypr.hyprsidekick")` line from
-`~/.config/hypr/bindings.lua` and delete `~/.config/hypr/hyprsidekick.lua` if you
-no longer want the generated binds.
+`~/.config/hypr/bindings.lua`, and delete `~/.config/hypr/hyprsidekick.lua` (the
+generated binds) and `~/.config/hyprsidekick/` (the saved config) if you no longer
+want them.
 
 ## License
 
