@@ -1,10 +1,10 @@
 # Hyprsidekick
 
-An [Omarchy](https://omarchy.org/) bar widget for **mnemonic named workspaces** —
+An [Omarchy](https://omarchy.org/) bar widget for **mnemonic named workspaces**,
 AeroSpace-style (the macOS tiling window manager) adapted to Hyprland. Shows the
 workspace you're on as a pill, opens a dropdown of all your workspaces (named +
 numbered) to click-jump, and gives you a visual Settings panel to manage them and
-their Hyprland keybinds — no JSON editing required.
+their Hyprland keybinds. No JSON editing required.
 
 > Replaces the stock `omarchy.workspaces` widget, which only shows numeric
 > workspaces and hides named ones.
@@ -24,7 +24,7 @@ an **icon**). Hyprsidekick then:
 
 - binds **`ALT + <letter>`** to jump to that workspace, and **`ALT + SHIFT + <letter>`**
   to send the focused window there, and
-- shows the workspace you're currently on as a **pill** in the bar — by name,
+- shows the workspace you're currently on as a **pill** in the bar, by name,
   letter, `letter·name`, or icon (your choice).
 
 **Example:** a workspace with key `C` and name `Coding` →
@@ -46,7 +46,7 @@ to you. Click the pill to see them all and jump with the mouse.
 
 ## Features
 
-- **Pill** showing the active workspace — by mnemonic, name, `key·name`, or icon.
+- **Pill** showing the active workspace, by mnemonic, name, `key·name`, or icon.
 - **Dropdown** of every workspace (named mnemonics + numbered), with the active
   one highlighted and an occupied dot; click a row to jump.
 - **Settings panel** (in-shell, no config files): add / remove / edit workspaces
@@ -54,7 +54,7 @@ to you. Click the pill to see them all and jump with the mouse.
   move the widget between bar sections, and hide the stock widget.
 - **Hyprland integration**: generates `~/.config/hypr/hyprsidekick.lua` with the
   `ALT+<key>` switch / `ALT+SHIFT+<key>` move binds for your workspaces and
-  reloads Hyprland — one click.
+  reloads Hyprland in one click.
 - Live preview while editing; **Cancel** (or Escape / click-away) reverts,
   **Done** commits.
 - **Durable config**: your workspaces persist to `~/.config/hyprsidekick/config.json`,
@@ -70,7 +70,7 @@ omarchy bar move kconfesor.hyprsidekick --section left
 Open the widget's **Settings** (dropdown → gear), set up your workspaces, and hit
 **Done**. Whenever you add/remove a workspace or change its key or name,
 Hyprsidekick regenerates the `ALT+<key>` binds and reloads Hyprland
-automatically — and installs the `require("hypr.hyprsidekick")` line into
+automatically, and installs the `require("hypr.hyprsidekick")` line into
 `~/.config/hypr/bindings.lua` for you the first time. (A manual **Apply to
 Hyprland** button is there too, to force a re-apply.)
 
@@ -93,7 +93,7 @@ into the widget's entry in `~/.config/omarchy/shell.json`:
 
 | Key | Values | Default | Meaning |
 |-----|--------|---------|---------|
-| `workspaces` | `[{ "key", "name", "icon" }]` | — | Your named workspaces + mnemonics. |
+| `workspaces` | `[{ "key", "name", "icon" }]` | none | Your named workspaces + mnemonics. |
 | `labelFormat` | `key` · `name` · `key-name` · `icon` | `key-name` | How the pill renders the active workspace. |
 | `numberedMode` | `range` · `active` · `hidden` | `active` | Numbered workspaces in the dropdown: fixed 1..N, only active, or none. |
 | `numberedCount` | integer | `9` | N, when `numberedMode` is `range`. |
